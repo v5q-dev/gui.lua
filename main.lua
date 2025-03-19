@@ -1,5 +1,6 @@
--- Advanced Roblox GUI Library with Themes & Animations
+-- Advanced Roblox GUI Library with Themes, Animations & Keybinds
 
+local UIS = game:GetService("UserInputService")
 local function DestroyExistingGUI()
     for _ = 1, 50 do 
         local existingGUI = game.CoreGui:FindFirstChild("AdvancedGUI")
@@ -13,7 +14,7 @@ wait(0.05)
 
 local Library = {}
 
-function Library:CreateWindow(windowTitle)
+function Library:CreateWindow(windowTitle, keybind)
     local GUI = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
     local Corner = Instance.new("UICorner")
@@ -23,8 +24,10 @@ function Library:CreateWindow(windowTitle)
     local MinimizeButton = Instance.new("ImageButton")
     local TabContainer = Instance.new("Frame")
     local PageContainer = Instance.new("Frame")
+    local Notification = Instance.new("TextLabel")
     local Theme = {MainColor = Color3.fromRGB(25, 25, 25), AccentColor = Color3.fromRGB(40, 40, 40)}
-
+    local isGUIVisible = true
+    
     -- GUI Properties
     GUI.Name = "AdvancedGUI"
     GUI.Parent = game.CoreGui
@@ -68,12 +71,36 @@ function Library:CreateWindow(windowTitle)
     MinimizeButton.Image = "rbxassetid://83319488809387"
     MinimizeButton.BackgroundTransparency = 1
     
+    -- Notification
+    Notification.Parent = GUI
+    Notification.Size = UDim2.new(0, 300, 0, 50)
+    Notification.Position = UDim2.new(0.5, -150, 0.5, -25)
+    Notification.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Notification.Font = Enum.Font.GothamBold
+    Notification.TextSize = 14
+    Notification.Visible = false
+    Notification.Text = ""
+    
     CloseButton.MouseButton1Click:Connect(function()
-        GUI:Destroy()
+        MainFrame.Visible = false
+        isGUIVisible = false
+        Notification.Text = "Script Closed. To Open It Again Press " .. keybind
+        Notification.Visible = true
+        wait(3)
+        Notification.Visible = false
     end)
     
     MinimizeButton.MouseButton1Click:Connect(function()
         MainFrame.Visible = not MainFrame.Visible
+    end)
+    
+    -- Keybind to Open GUI
+    UIS.InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == Enum.KeyCode[keybind] then
+            MainFrame.Visible = not MainFrame.Visible
+            isGUIVisible = not isGUIVisible
+        end
     end)
     
     -- Tabs & Pages
