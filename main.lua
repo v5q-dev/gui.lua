@@ -13,6 +13,8 @@ DestroyExistingGUI()
 wait(0.05)
 
 local Library = {}
+local keySystemEnabled = true
+local currentKey = "SubTo _V5Q"
 
 -- Loading Screen
 local LoadingScreen = Instance.new("ScreenGui")
@@ -34,47 +36,73 @@ LoadingText.Text = "Loading GUI..."
 LoadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
 LoadingText.TextSize = 18
 
-wait(3) -- Simulate loading time
+wait(3)
 LoadingScreen:Destroy()
 
--- Key System
-local KeySystemScreen = Instance.new("ScreenGui")
-local KeyFrame = Instance.new("Frame")
-local KeyInput = Instance.new("TextBox")
-local SubmitButton = Instance.new("TextButton")
+-- Notification for Discord Server
+local Notification = Instance.new("Hint")
+Notification.Parent = game.CoreGui
+Notification.Text = "Discord Server: https://discord.gg/p3QUQu6RZN"
+wait(5)
+Notification:Destroy()
 
-KeySystemScreen.Name = "KeySystemScreen"
-KeySystemScreen.Parent = game.CoreGui
+-- Key System Functionality
+local function ShowKeySystem()
+    if not keySystemEnabled then return end
+    
+    local KeySystemScreen = Instance.new("ScreenGui")
+    local KeyFrame = Instance.new("Frame")
+    local KeyInput = Instance.new("TextBox")
+    local SubmitButton = Instance.new("TextButton")
 
-KeyFrame.Parent = KeySystemScreen
-KeyFrame.Size = UDim2.new(0, 300, 0, 100)
-KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -50)
-KeyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    KeySystemScreen.Name = "KeySystemScreen"
+    KeySystemScreen.Parent = game.CoreGui
 
-KeyInput.Parent = KeyFrame
-KeyInput.Size = UDim2.new(1, 0, 0, 40)
-KeyInput.Position = UDim2.new(0, 0, 0, 10)
-KeyInput.PlaceholderText = "Enter Key"
-KeyInput.Font = Enum.Font.GothamBold
-KeyInput.TextSize = 14
-KeyInput.TextColor3 = Color3.fromRGB(0, 0, 0)
+    KeyFrame.Parent = KeySystemScreen
+    KeyFrame.Size = UDim2.new(0, 300, 0, 100)
+    KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -50)
+    KeyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 
-SubmitButton.Parent = KeyFrame
-SubmitButton.Size = UDim2.new(1, 0, 0, 40)
-SubmitButton.Position = UDim2.new(0, 0, 0, 50)
-SubmitButton.Text = "Submit"
-SubmitButton.Font = Enum.Font.GothamBold
-SubmitButton.TextSize = 14
-SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-SubmitButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    KeyInput.Parent = KeyFrame
+    KeyInput.Size = UDim2.new(1, 0, 0, 40)
+    KeyInput.Position = UDim2.new(0, 0, 0, 10)
+    KeyInput.PlaceholderText = "Enter Key"
+    KeyInput.Font = Enum.Font.GothamBold
+    KeyInput.TextSize = 14
+    KeyInput.TextColor3 = Color3.fromRGB(0, 0, 0)
 
-SubmitButton.MouseButton1Click:Connect(function()
-    if KeyInput.Text == "SubTo _V5Q" then
-        KeySystemScreen:Destroy()
-    else
-        KeyInput.Text = "Invalid Key!"
+    SubmitButton.Parent = KeyFrame
+    SubmitButton.Size = UDim2.new(1, 0, 0, 40)
+    SubmitButton.Position = UDim2.new(0, 0, 0, 50)
+    SubmitButton.Text = "Submit"
+    SubmitButton.Font = Enum.Font.GothamBold
+    SubmitButton.TextSize = 14
+    SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    SubmitButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+
+    SubmitButton.MouseButton1Click:Connect(function()
+        if KeyInput.Text == currentKey then
+            KeySystemScreen:Destroy()
+        else
+            KeyInput.Text = "Invalid Key!"
+        end
+    end)
+end
+
+if keySystemEnabled then
+    ShowKeySystem()
+end
+
+function Library:SetKey(newKey)
+    currentKey = newKey
+end
+
+function Library:EnableKeySystem(state)
+    keySystemEnabled = state
+    if state then
+        ShowKeySystem()
     end
-end)
+end
 
 function Library:CreateWindow(windowTitle, keybind)
     print("Creating Window: " .. windowTitle)
@@ -87,7 +115,6 @@ function Library:CreateWindow(windowTitle, keybind)
     local MinimizeButton = Instance.new("TextButton")
     local TabContainer = Instance.new("Frame")
     local PageContainer = Instance.new("Frame")
-    local Notification = Instance.new("TextLabel")
     local Theme = {MainColor = Color3.fromRGB(25, 25, 25), AccentColor = Color3.fromRGB(40, 40, 40)}
     local isGUIVisible = true
     
