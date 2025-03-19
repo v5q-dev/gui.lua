@@ -19,8 +19,8 @@ function Library:CreateWindow(windowTitle)
     local Corner = Instance.new("UICorner")
     local TopBar = Instance.new("Frame")
     local Title = Instance.new("TextLabel")
-    local CloseButton = Instance.new("TextButton")
-    local MinimizeButton = Instance.new("TextButton")
+    local CloseButton = Instance.new("ImageButton")
+    local MinimizeButton = Instance.new("ImageButton")
     local TabContainer = Instance.new("Frame")
     local PageContainer = Instance.new("Frame")
     local Theme = {MainColor = Color3.fromRGB(25, 25, 25), AccentColor = Color3.fromRGB(40, 40, 40)}
@@ -59,18 +59,14 @@ function Library:CreateWindow(windowTitle)
     CloseButton.Parent = TopBar
     CloseButton.Size = UDim2.new(0, 30, 1, 0)
     CloseButton.Position = UDim2.new(1, -30, 0, 0)
-    CloseButton.Text = "X"
-    CloseButton.Font = Enum.Font.GothamBold
-    CloseButton.TextColor3 = Color3.fromRGB(255, 50, 50)
-    CloseButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    CloseButton.Image = "rbxassetid://124537315431255"
+    CloseButton.BackgroundTransparency = 1
     
     MinimizeButton.Parent = TopBar
     MinimizeButton.Size = UDim2.new(0, 30, 1, 0)
     MinimizeButton.Position = UDim2.new(1, -60, 0, 0)
-    MinimizeButton.Text = "-"
-    MinimizeButton.Font = Enum.Font.GothamBold
-    MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    MinimizeButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    MinimizeButton.Image = "rbxassetid://83319488809387"
+    MinimizeButton.BackgroundTransparency = 1
     
     CloseButton.MouseButton1Click:Connect(function()
         GUI:Destroy()
