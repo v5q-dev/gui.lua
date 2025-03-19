@@ -1,5 +1,4 @@
--- Advanced Roblox GUI Library
--- Redesigned with better UI, animations, and optimizations
+-- Advanced Roblox GUI Library with Themes & Animations
 
 local function DestroyExistingGUI()
     for _ = 1, 50 do 
@@ -21,8 +20,10 @@ function Library:CreateWindow(windowTitle)
     local TopBar = Instance.new("Frame")
     local Title = Instance.new("TextLabel")
     local CloseButton = Instance.new("TextButton")
+    local MinimizeButton = Instance.new("TextButton")
     local TabContainer = Instance.new("Frame")
     local PageContainer = Instance.new("Frame")
+    local Theme = {MainColor = Color3.fromRGB(25, 25, 25), AccentColor = Color3.fromRGB(40, 40, 40)}
 
     -- GUI Properties
     GUI.Name = "AdvancedGUI"
@@ -31,7 +32,7 @@ function Library:CreateWindow(windowTitle)
     GUI.ResetOnSpawn = false
     
     MainFrame.Parent = GUI
-    MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    MainFrame.BackgroundColor3 = Theme.MainColor
     MainFrame.Position = UDim2.new(0.3, 0, 0.2, 0)
     MainFrame.Size = UDim2.new(0, 450, 0, 320)
     MainFrame.Active = true
@@ -46,7 +47,7 @@ function Library:CreateWindow(windowTitle)
     TopBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     
     Title.Parent = TopBar
-    Title.Size = UDim2.new(1, -30, 1, 0)
+    Title.Size = UDim2.new(1, -60, 1, 0)
     Title.Font = Enum.Font.GothamBold
     Title.Text = windowTitle
     Title.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -54,6 +55,7 @@ function Library:CreateWindow(windowTitle)
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Position = UDim2.new(0, 10, 0, 0)
     
+    -- Buttons (Close & Minimize)
     CloseButton.Parent = TopBar
     CloseButton.Size = UDim2.new(0, 30, 1, 0)
     CloseButton.Position = UDim2.new(1, -30, 0, 0)
@@ -62,15 +64,27 @@ function Library:CreateWindow(windowTitle)
     CloseButton.TextColor3 = Color3.fromRGB(255, 50, 50)
     CloseButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     
+    MinimizeButton.Parent = TopBar
+    MinimizeButton.Size = UDim2.new(0, 30, 1, 0)
+    MinimizeButton.Position = UDim2.new(1, -60, 0, 0)
+    MinimizeButton.Text = "-"
+    MinimizeButton.Font = Enum.Font.GothamBold
+    MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    MinimizeButton.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    
     CloseButton.MouseButton1Click:Connect(function()
         GUI:Destroy()
+    end)
+    
+    MinimizeButton.MouseButton1Click:Connect(function()
+        MainFrame.Visible = not MainFrame.Visible
     end)
     
     -- Tabs & Pages
     TabContainer.Parent = MainFrame
     TabContainer.Size = UDim2.new(0, 120, 1, -30)
     TabContainer.Position = UDim2.new(0, 0, 0, 30)
-    TabContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    TabContainer.BackgroundColor3 = Theme.AccentColor
     
     PageContainer.Parent = MainFrame
     PageContainer.Size = UDim2.new(1, -120, 1, -30)
@@ -81,7 +95,7 @@ function Library:CreateWindow(windowTitle)
         local Tab = Instance.new("TextButton")
         Tab.Parent = TabContainer
         Tab.Size = UDim2.new(1, 0, 0, 40)
-        Tab.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        Tab.BackgroundColor3 = Theme.AccentColor
         Tab.Text = tabName
         Tab.Font = Enum.Font.GothamSemibold
         Tab.TextSize = 14
@@ -111,7 +125,13 @@ function Library:CreateWindow(windowTitle)
     
     return {
         AddTab = AddTab,
-        CreatePage = CreatePage
+        CreatePage = CreatePage,
+        SetTheme = function(newTheme)
+            Theme.MainColor = newTheme.MainColor or Theme.MainColor
+            Theme.AccentColor = newTheme.AccentColor or Theme.AccentColor
+            MainFrame.BackgroundColor3 = Theme.MainColor
+            TabContainer.BackgroundColor3 = Theme.AccentColor
+        end
     }
 end
 
