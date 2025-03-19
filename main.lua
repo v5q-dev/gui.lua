@@ -14,14 +14,77 @@ wait(0.05)
 
 local Library = {}
 
+-- Loading Screen
+local LoadingScreen = Instance.new("ScreenGui")
+local LoadingFrame = Instance.new("Frame")
+local LoadingText = Instance.new("TextLabel")
+
+LoadingScreen.Name = "LoadingScreen"
+LoadingScreen.Parent = game.CoreGui
+
+LoadingFrame.Parent = LoadingScreen
+LoadingFrame.Size = UDim2.new(0, 300, 0, 100)
+LoadingFrame.Position = UDim2.new(0.5, -150, 0.5, -50)
+LoadingFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+
+LoadingText.Parent = LoadingFrame
+LoadingText.Size = UDim2.new(1, 0, 1, 0)
+LoadingText.Font = Enum.Font.GothamBold
+LoadingText.Text = "Loading GUI..."
+LoadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+LoadingText.TextSize = 18
+
+wait(3) -- Simulate loading time
+LoadingScreen:Destroy()
+
+-- Key System
+local KeySystemScreen = Instance.new("ScreenGui")
+local KeyFrame = Instance.new("Frame")
+local KeyInput = Instance.new("TextBox")
+local SubmitButton = Instance.new("TextButton")
+
+KeySystemScreen.Name = "KeySystemScreen"
+KeySystemScreen.Parent = game.CoreGui
+
+KeyFrame.Parent = KeySystemScreen
+KeyFrame.Size = UDim2.new(0, 300, 0, 100)
+KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -50)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+
+KeyInput.Parent = KeyFrame
+KeyInput.Size = UDim2.new(1, 0, 0, 40)
+KeyInput.Position = UDim2.new(0, 0, 0, 10)
+KeyInput.PlaceholderText = "Enter Key"
+KeyInput.Font = Enum.Font.GothamBold
+KeyInput.TextSize = 14
+KeyInput.TextColor3 = Color3.fromRGB(0, 0, 0)
+
+SubmitButton.Parent = KeyFrame
+SubmitButton.Size = UDim2.new(1, 0, 0, 40)
+SubmitButton.Position = UDim2.new(0, 0, 0, 50)
+SubmitButton.Text = "Submit"
+SubmitButton.Font = Enum.Font.GothamBold
+SubmitButton.TextSize = 14
+SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SubmitButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+
+SubmitButton.MouseButton1Click:Connect(function()
+    if KeyInput.Text == "SubTo _V5Q" then
+        KeySystemScreen:Destroy()
+    else
+        KeyInput.Text = "Invalid Key!"
+    end
+end)
+
 function Library:CreateWindow(windowTitle, keybind)
+    print("Creating Window: " .. windowTitle)
     local GUI = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
     local Corner = Instance.new("UICorner")
     local TopBar = Instance.new("Frame")
     local Title = Instance.new("TextLabel")
-    local CloseButton = Instance.new("ImageButton")
-    local MinimizeButton = Instance.new("ImageButton")
+    local CloseButton = Instance.new("TextButton")
+    local MinimizeButton = Instance.new("TextButton")
     local TabContainer = Instance.new("Frame")
     local PageContainer = Instance.new("Frame")
     local Notification = Instance.new("TextLabel")
@@ -62,100 +125,14 @@ function Library:CreateWindow(windowTitle, keybind)
     CloseButton.Parent = TopBar
     CloseButton.Size = UDim2.new(0, 30, 1, 0)
     CloseButton.Position = UDim2.new(1, -30, 0, 0)
-    CloseButton.Image = "rbxassetid://124537315431255"
-    CloseButton.BackgroundTransparency = 1
+    CloseButton.Text = "X"
     
     MinimizeButton.Parent = TopBar
     MinimizeButton.Size = UDim2.new(0, 30, 1, 0)
     MinimizeButton.Position = UDim2.new(1, -60, 0, 0)
-    MinimizeButton.Image = "rbxassetid://83319488809387"
-    MinimizeButton.BackgroundTransparency = 1
+    MinimizeButton.Text = "-"
     
-    -- Notification
-    Notification.Parent = GUI
-    Notification.Size = UDim2.new(0, 300, 0, 50)
-    Notification.Position = UDim2.new(0.5, -150, 0.5, -25)
-    Notification.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    Notification.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Notification.Font = Enum.Font.GothamBold
-    Notification.TextSize = 14
-    Notification.Visible = false
-    Notification.Text = ""
-    
-    CloseButton.MouseButton1Click:Connect(function()
-        MainFrame.Visible = false
-        isGUIVisible = false
-        Notification.Text = "Script Closed. To Open It Again Press " .. keybind
-        Notification.Visible = true
-        wait(3)
-        Notification.Visible = false
-    end)
-    
-    MinimizeButton.MouseButton1Click:Connect(function()
-        MainFrame.Visible = not MainFrame.Visible
-    end)
-    
-    -- Keybind to Open GUI
-    UIS.InputBegan:Connect(function(input, gameProcessed)
-        if not gameProcessed and input.KeyCode == Enum.KeyCode[keybind] then
-            MainFrame.Visible = not MainFrame.Visible
-            isGUIVisible = not isGUIVisible
-        end
-    end)
-    
-    -- Tabs & Pages
-    TabContainer.Parent = MainFrame
-    TabContainer.Size = UDim2.new(0, 120, 1, -30)
-    TabContainer.Position = UDim2.new(0, 0, 0, 30)
-    TabContainer.BackgroundColor3 = Theme.AccentColor
-    
-    PageContainer.Parent = MainFrame
-    PageContainer.Size = UDim2.new(1, -120, 1, -30)
-    PageContainer.Position = UDim2.new(0, 120, 0, 30)
-    PageContainer.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-    
-    local function AddTab(tabName, page)
-        local Tab = Instance.new("TextButton")
-        Tab.Parent = TabContainer
-        Tab.Size = UDim2.new(1, 0, 0, 40)
-        Tab.BackgroundColor3 = Theme.AccentColor
-        Tab.Text = tabName
-        Tab.Font = Enum.Font.GothamSemibold
-        Tab.TextSize = 14
-        Tab.TextColor3 = Color3.fromRGB(255, 255, 255)
-        
-        local function ShowPage()
-            for _, child in pairs(PageContainer:GetChildren()) do
-                if child:IsA("Frame") then
-                    child.Visible = false
-                end
-            end
-            page.Visible = true
-        end
-        
-        Tab.MouseButton1Click:Connect(ShowPage)
-        return ShowPage
-    end
-    
-    local function CreatePage()
-        local Page = Instance.new("Frame")
-        Page.Parent = PageContainer
-        Page.Size = UDim2.new(1, 0, 1, 0)
-        Page.BackgroundTransparency = 1
-        Page.Visible = false
-        return Page
-    end
-    
-    return {
-        AddTab = AddTab,
-        CreatePage = CreatePage,
-        SetTheme = function(newTheme)
-            Theme.MainColor = newTheme.MainColor or Theme.MainColor
-            Theme.AccentColor = newTheme.AccentColor or Theme.AccentColor
-            MainFrame.BackgroundColor3 = Theme.MainColor
-            TabContainer.BackgroundColor3 = Theme.AccentColor
-        end
-    }
+    return Library
 end
 
 return Library
