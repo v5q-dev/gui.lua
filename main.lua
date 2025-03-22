@@ -1,180 +1,303 @@
--- Define the GUI
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "AdvancedUI"
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+-- ModuleScript: UILibrary.lua
+local UILibrary = {}
+local TweenService = game:GetService("TweenService")
 
--- Create a draggable frame for the UI
-local mainFrame = Instance.new("Frame")
-mainFrame.Parent = screenGui
-mainFrame.Size = UDim2.new(0, 400, 0, 500)
-mainFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
-mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-mainFrame.Draggable = true
-
--- Minimize/Close Buttons
-local closeButton = Instance.new("TextButton")
-closeButton.Parent = mainFrame
-closeButton.Size = UDim2.new(0, 50, 0, 50)
-closeButton.Position = UDim2.new(1, -60, 0, 10)
-closeButton.Text = "X"
-closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-closeButton.MouseButton1Click:Connect(function()
-    mainFrame.Visible = false  -- Close the UI
-end)
-
-local minimizeButton = Instance.new("TextButton")
-minimizeButton.Parent = mainFrame
-minimizeButton.Size = UDim2.new(0, 50, 0, 50)
-minimizeButton.Position = UDim2.new(1, -120, 0, 10)
-minimizeButton.Text = "-"
-minimizeButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
-minimizeButton.MouseButton1Click:Connect(function()
-    mainFrame.Size = UDim2.new(0, 400, 0, 36)  -- Minimize the UI
-end)
-
--- Hide/Show UI Button
-local hideButton = Instance.new("TextButton")
-hideButton.Parent = screenGui
-hideButton.Size = UDim2.new(0, 100, 0, 50)
-hideButton.Position = UDim2.new(0.5, -50, 0.95, -60)
-hideButton.Text = "Hide UI"
-hideButton.MouseButton1Click:Connect(function()
-    screenGui.Enabled = false  -- Hide the entire GUI
-end)
-
--- Show UI again (from settings)
-local showButton = Instance.new("TextButton")
-showButton.Parent = screenGui
-showButton.Size = UDim2.new(0, 100, 0, 50)
-showButton.Position = UDim2.new(0.5, -50, 0.95, -110)
-showButton.Text = "Show UI"
-showButton.MouseButton1Click:Connect(function()
-    screenGui.Enabled = true  -- Show the GUI again
-end)
-
--- Color Customization (Example of Color Change)
-local colorButton = Instance.new("TextButton")
-colorButton.Parent = mainFrame
-colorButton.Size = UDim2.new(0, 100, 0, 50)
-colorButton.Position = UDim2.new(0.5, -50, 0, 100)
-colorButton.Text = "Change Color"
-colorButton.MouseButton1Click:Connect(function()
-    mainFrame.BackgroundColor3 = Color3.fromRGB(math.random(0, 255), math.random(0, 255), math.random(0, 255))
-end)
-
--- Loading Screen (example with progress bar)
-local loadingFrame = Instance.new("Frame")
-loadingFrame.Parent = screenGui
-loadingFrame.Size = UDim2.new(0, 400, 0, 500)
-loadingFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
-loadingFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-loadingFrame.Visible = true
-
-local progressBar = Instance.new("Frame")
-progressBar.Parent = loadingFrame
-progressBar.Size = UDim2.new(0, 0, 0, 50)
-progressBar.Position = UDim2.new(0.5, -200, 0.5, 0)
-progressBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-
-local loadingText = Instance.new("TextLabel")
-loadingText.Parent = loadingFrame
-loadingText.Size = UDim2.new(1, 0, 0, 50)
-loadingText.Position = UDim2.new(0, 0, 0, -60)
-loadingText.Text = "Loading..."
-loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
-
--- Simulate loading
-for i = 1, 100 do
-    wait(0.05)
-    progressBar.Size = UDim2.new(i/100, 0, 0, 50)
+-- ========== CORE FUNCTIONS ==========
+function UILibrary:CreateScreen(parent)
+    local gui = Instance.new("ScreenGui")
+    gui.ResetOnSpawn = false
+    gui.Parent = parent or game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    return gui
 end
-wait(1)
-loadingFrame.Visible = false  -- Hide loading screen after completion
 
--- Key System
-local keySystemFrame = Instance.new("Frame")
-keySystemFrame.Parent = mainFrame
-keySystemFrame.Size = UDim2.new(0, 400, 0, 200)
-keySystemFrame.Position = UDim2.new(0, 0, 0, 150)
-keySystemFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+-- ========== LOADING SCREEN ==========
+function UILibrary:LoadingScreen()
+    local gui = self:CreateScreen()
+    gui.Name = "LoadingScreen"
+    gui.IgnoreGuiInset = true
 
-local keyLabel = Instance.new("TextLabel")
-keyLabel.Parent = keySystemFrame
-keyLabel.Size = UDim2.new(1, 0, 0, 50)
-keyLabel.Position = UDim2.new(0, 0, 0, 10)
-keyLabel.Text = "Enter Key"
-keyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    local container = Instance.new("Frame")
+    container.Size = UDim2.new(1, 0, 1, 0)
+    container.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+    container.Parent = gui
 
-local keyTextBox = Instance.new("TextBox")
-keyTextBox.Parent = keySystemFrame
-keyTextBox.Size = UDim2.new(1, -20, 0, 50)
-keyTextBox.Position = UDim2.new(0, 10, 0, 60)
-keyTextBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-keyTextBox.ClearTextOnFocus = false
-keyTextBox.PlaceholderText = "Enter your key here"
-keyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    local logo = Instance.new("ImageLabel")
+    logo.Image = "rbxassetid://your_image_id"
+    logo.Size = UDim2.new(0.3, 0, 0.3, 0)
+    logo.Position = UDim2.new(0.35, 0, 0.2, 0)
+    logo.Parent = container
 
-local submitButton = Instance.new("TextButton")
-submitButton.Parent = keySystemFrame
-submitButton.Size = UDim2.new(0, 100, 0, 50)
-submitButton.Position = UDim2.new(0.5, -50, 1, -60)
-submitButton.Text = "Submit"
-submitButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-submitButton.MouseButton1Click:Connect(function()
-    local enteredKey = keyTextBox.Text
-    if enteredKey == "SECRETKEY" then
-        -- Unlock functionality after correct key
-        print("Key is correct!")
-        keySystemFrame.Visible = false
-        mainFrame.Visible = true  -- Show the UI after key is correct
-    else
-        -- Incorrect key message
-        print("Incorrect Key!")
-        keyTextBox.Text = ""
+    local progressBar = Instance.new("Frame")
+    progressBar.Size = UDim2.new(0.4, 0, 0.02, 0)
+    progressBar.Position = UDim2.new(0.3, 0, 0.6, 0)
+    progressBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    progressBar.Parent = container
+
+    local fill = Instance.new("Frame")
+    fill.Size = UDim2.new(0, 0, 1, 0)
+    fill.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+    fill.Parent = progressBar
+
+    local percentage = Instance.new("TextLabel")
+    percentage.Text = "0%"
+    percentage.Font = Enum.Font.GothamBold
+    percentage.TextColor3 = Color3.new(1, 1, 1)
+    percentage.Size = UDim2.new(1, 0, 0.1, 0)
+    percentage.Position = UDim2.new(0, 0, 0.65, 0)
+    percentage.Parent = container
+
+    return {
+        Gui = gui,
+        Update = function(percent)
+            fill.Size = UDim2.new(percent/100, 0, 1, 0)
+            percentage.Text = math.floor(percent).."% Loaded"
+        end,
+        Destroy = function()
+            gui:Destroy()
+        end
+    }
+end
+
+-- ========== CHARACTER SELECTOR ==========
+function UILibrary:CharacterSelector(characters)
+    local gui = self:CreateScreen()
+    gui.Name = "CharacterSelect"
+
+    local container = Instance.new("Frame")
+    container.Size = UDim2.new(0.8, 0, 0.8, 0)
+    container.Position = UDim2.new(0.1, 0, 0.1, 0)
+    container.BackgroundTransparency = 1
+    container.Parent = gui
+
+    local layout = Instance.new("UIGridLayout")
+    layout.CellSize = UDim2.new(0.2, 0, 0.3, 0)
+    layout.CellPadding = UDim2.new(0.05, 0, 0.05, 0)
+    layout.Parent = container
+
+    local selected
+    local event = Instance.new("BindableEvent")
+
+    for _, char in pairs(characters) do
+        local button = Instance.new("TextButton")
+        button.Text = char.Name
+        button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        button.TextColor3 = Color3.new(1, 1, 1)
+        button.Font = Enum.Font.GothamBold
+        
+        local icon = Instance.new("ImageLabel")
+        icon.Image = char.Icon
+        icon.Size = UDim2.new(0.8, 0, 0.6, 0)
+        icon.Position = UDim2.new(0.1, 0, 0.1, 0)
+        icon.Parent = button
+
+        button.MouseButton1Click:Connect(function()
+            if selected then
+                selected.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            end
+            selected = button
+            button.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+            event:Fire(char)
+        end)
+        
+        button.Parent = container
     end
-end)
 
--- Player Selector (Dropdown style)
-local playerSelectorFrame = Instance.new("Frame")
-playerSelectorFrame.Parent = mainFrame
-playerSelectorFrame.Size = UDim2.new(0, 400, 0, 100)
-playerSelectorFrame.Position = UDim2.new(0, 0, 0, 250)
-playerSelectorFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-
-local playerDropdown = Instance.new("TextButton")
-playerDropdown.Parent = playerSelectorFrame
-playerDropdown.Size = UDim2.new(0, 400, 0, 50)
-playerDropdown.Position = UDim2.new(0, 0, 0, 25)
-playerDropdown.Text = "Select a Player"
-playerDropdown.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
-
-local playerList = Instance.new("ScrollingFrame")
-playerList.Parent = playerSelectorFrame
-playerList.Size = UDim2.new(1, 0, 0, 200)
-playerList.Position = UDim2.new(0, 0, 0, 75)
-playerList.CanvasSize = UDim2.new(0, 0, 0, 0)
-playerList.ScrollBarThickness = 10
-
-local uiListLayout = Instance.new("UIListLayout")
-uiListLayout.Parent = playerList
-uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-uiListLayout.Padding = UDim.new(0, 5)
-
--- Populate the player list
-for _, player in ipairs(game.Players:GetPlayers()) do
-    local playerButton = Instance.new("TextButton")
-    playerButton.Parent = playerList
-    playerButton.Size = UDim2.new(0, 380, 0, 40)
-    playerButton.Text = player.Name
-    playerButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    playerButton.MouseButton1Click:Connect(function()
-        print("Selected Player: " .. player.Name)
-        playerDropdown.Text = "Selected: " .. player.Name
-        playerList.Visible = false  -- Close the player list
-    end)
+    return {
+        Gui = gui,
+        Selected = event.Event,
+        Destroy = function()
+            gui:Destroy()
+        end
+    }
 end
 
--- Toggle player list visibility
-playerDropdown.MouseButton1Click:Connect(function()
-    playerList.Visible = not playerList.Visible
-end)
+-- ========== COLOR PICKER ==========
+function UILibrary:ColorPicker(defaultColor)
+    local gui = self:CreateScreen()
+    local currentColor = defaultColor or Color3.new(1, 1, 1)
+
+    -- Main container
+    local main = Instance.new("Frame")
+    main.Size = UDim2.new(0.4, 0, 0.5, 0)
+    main.Position = UDim2.new(0.3, 0, 0.25, 0)
+    main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    main.Parent = gui
+
+    -- Color preview
+    local preview = Instance.new("Frame")
+    preview.Size = UDim2.new(0.2, 0, 0.2, 0)
+    preview.Position = UDim2.new(0.75, 0, 0.1, 0)
+    preview.BackgroundColor3 = currentColor
+    preview.Parent = main
+
+    -- RGB Sliders
+    local sliders = {
+        self:CreateSlider(main, "R", 0.05, 0.75, Color3.fromRGB(255, 0, 0)),
+        self:CreateSlider(main, "G", 0.05, 0.85, Color3.fromRGB(0, 255, 0)),
+        self:CreateSlider(main, "B", 0.05, 0.95, Color3.fromRGB(0, 0, 255))
+    }
+
+    -- HSV Picker
+    local hueMap = Instance.new("ImageButton")
+    hueMap.Size = UDim2.new(0.6, 0, 0.6, 0)
+    hueMap.Position = UDim2.new(0.05, 0, 0.1, 0)
+    hueMap.Image = "rbxassetid://your_hsv_texture_id"
+    hueMap.Parent = main
+
+    -- Value slider
+    local valueSlider = self:CreateSlider(main, "Value", 0.75, 0.85)
+
+    local event = Instance.new("BindableEvent")
+
+    local function UpdateColor(color, source)
+        currentColor = color
+        preview.BackgroundColor3 = color
+        
+        if source ~= "rgb" then
+            sliders[1]:Set(color.R * 255)
+            sliders[2]:Set(color.G * 255)
+            sliders[3]:Set(color.B * 255)
+        end
+        
+        event:Fire(color)
+    end
+
+    hueMap.MouseButton1Down:Connect(function(x, y)
+        local relX = (x - hueMap.AbsolutePosition.X) / hueMap.AbsoluteSize.X
+        local relY = (y - hueMap.AbsolutePosition.Y) / hueMap.AbsoluteSize.Y
+        local h = math.clamp(relX, 0, 1)
+        local s = 1 - math.clamp(relY, 0, 1)
+        local _, _, v = Color3.toHSV(currentColor)
+        UpdateColor(Color3.fromHSV(h, s, v), "hsv")
+    end)
+
+    for _, slider in pairs(sliders) do
+        slider.Changed:Connect(function()
+            UpdateColor(Color3.new(
+                sliders[1].Value/255,
+                sliders[2].Value/255,
+                sliders[3].Value/255
+            ), "rgb")
+        end)
+    end
+
+    valueSlider.Changed:Connect(function(val)
+        local h, s = Color3.toHSV(currentColor)
+        UpdateColor(Color3.fromHSV(h, s, val/100), "hsv")
+    end)
+
+    return {
+        Gui = gui,
+        ColorChanged = event.Event,
+        Destroy = function()
+            gui:Destroy()
+        end
+    }
+end
+
+function UILibrary:CreateSlider(parent, label, x, y, color)
+    local slider = Instance.new("Frame")
+    slider.Size = UDim2.new(0.9, 0, 0.08, 0)
+    slider.Position = UDim2.new(x, 0, y, 0)
+    slider.BackgroundTransparency = 1
+    slider.Parent = parent
+
+    local title = Instance.new("TextLabel")
+    title.Text = label
+    title.Size = UDim2.new(0.15, 0, 1, 0)
+    title.Font = Enum.Font.Gotham
+    title.TextColor3 = Color3.new(1, 1, 1)
+    title.Parent = slider
+
+    local track = Instance.new("Frame")
+    track.Size = UDim2.new(0.7, 0, 0.5, 0)
+    track.Position = UDim2.new(0.2, 0, 0.25, 0)
+    track.BackgroundColor3 = color or Color3.fromRGB(60, 60, 60)
+    track.Parent = slider
+
+    local fill = Instance.new("Frame")
+    fill.Size = UDim2.new(0.5, 0, 1, 0)
+    fill.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+    fill.Parent = track
+
+    local value = Instance.new("TextLabel")
+    value.Text = "0"
+    value.Size = UDim2.new(0.15, 0, 1, 0)
+    value.Position = UDim2.new(0.9, 0, 0, 0)
+    value.Font = Enum.Font.Gotham
+    value.TextColor3 = Color3.new(1, 1, 1)
+    value.Parent = slider
+
+    local event = Instance.new("BindableEvent")
+    local dragging = false
+
+    track.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+        end
+    end)
+
+    track.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+            local pos = (input.Position.X - track.AbsolutePosition.X) / track.AbsoluteSize.X
+            pos = math.clamp(pos, 0, 1)
+            fill.Size = UDim2.new(pos, 0, 1, 0)
+            local val = label == "Value" and math.floor(pos * 100) or math.floor(pos * 255)
+            value.Text = tostring(val)
+            event:Fire(val)
+        end
+    end)
+
+    return {
+        Changed = event.Event,
+        Set = function(val)
+            local pos = val / (label == "Value" and 100 or 255)
+            fill.Size = UDim2.new(pos, 0, 1, 0)
+            value.Text = tostring(val)
+        end
+    }
+end
+
+-- ========== NOTIFICATIONS ==========
+function UILibrary:Notify(title, message, duration)
+    local gui = self:CreateScreen()
+    gui.Name = "Notification"
+
+    local main = Instance.new("Frame")
+    main.Size = UDim2.new(0.25, 0, 0.1, 0)
+    main.Position = UDim2.new(0.75, 0, 0.05, 0)
+    main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    main.Parent = gui
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Text = title
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.TextColor3 = Color3.new(1, 1, 1)
+    titleLabel.Size = UDim2.new(0.9, 0, 0.4, 0)
+    titleLabel.Position = UDim2.new(0.05, 0, 0.1, 0)
+    titleLabel.Parent = main
+
+    local messageLabel = Instance.new("TextLabel")
+    messageLabel.Text = message
+    messageLabel.Font = Enum.Font.Gotham
+    messageLabel.TextColor3 = Color3.new(0.8, 0.8, 0.8)
+    messageLabel.Size = UDim2.new(0.9, 0, 0.4, 0)
+    messageLabel.Position = UDim2.new(0.05, 0, 0.5, 0)
+    messageLabel.Parent = main
+
+    TweenService:Create(main, TweenInfo.new(0.5), {Position = UDim2.new(0.75, 0, 0.03, 0)}):Play()
+    
+    task.wait(duration or 5)
+    
+    TweenService:Create(main, TweenInfo.new(0.5), {Position = UDim2.new(0.75, 0, -0.2, 0)}):Play()
+    task.wait(0.5)
+    gui:Destroy()
+end
+
+return UILibrary
