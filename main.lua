@@ -1,165 +1,180 @@
--- Advanced Roblox GUI Library with Themes, Animations & Keybinds
+-- Define the GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "AdvancedUI"
+screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-local UIS = game:GetService("UserInputService")
-local function DestroyExistingGUI()
-    for _ = 1, 50 do 
-        local existingGUI = game.CoreGui:FindFirstChild("AdvancedGUI")
-        if existingGUI then existingGUI:Destroy() end
-    end
+-- Create a draggable frame for the UI
+local mainFrame = Instance.new("Frame")
+mainFrame.Parent = screenGui
+mainFrame.Size = UDim2.new(0, 400, 0, 500)
+mainFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.Draggable = true
+
+-- Minimize/Close Buttons
+local closeButton = Instance.new("TextButton")
+closeButton.Parent = mainFrame
+closeButton.Size = UDim2.new(0, 50, 0, 50)
+closeButton.Position = UDim2.new(1, -60, 0, 10)
+closeButton.Text = "X"
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+closeButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false  -- Close the UI
+end)
+
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Parent = mainFrame
+minimizeButton.Size = UDim2.new(0, 50, 0, 50)
+minimizeButton.Position = UDim2.new(1, -120, 0, 10)
+minimizeButton.Text = "-"
+minimizeButton.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+minimizeButton.MouseButton1Click:Connect(function()
+    mainFrame.Size = UDim2.new(0, 400, 0, 36)  -- Minimize the UI
+end)
+
+-- Hide/Show UI Button
+local hideButton = Instance.new("TextButton")
+hideButton.Parent = screenGui
+hideButton.Size = UDim2.new(0, 100, 0, 50)
+hideButton.Position = UDim2.new(0.5, -50, 0.95, -60)
+hideButton.Text = "Hide UI"
+hideButton.MouseButton1Click:Connect(function()
+    screenGui.Enabled = false  -- Hide the entire GUI
+end)
+
+-- Show UI again (from settings)
+local showButton = Instance.new("TextButton")
+showButton.Parent = screenGui
+showButton.Size = UDim2.new(0, 100, 0, 50)
+showButton.Position = UDim2.new(0.5, -50, 0.95, -110)
+showButton.Text = "Show UI"
+showButton.MouseButton1Click:Connect(function()
+    screenGui.Enabled = true  -- Show the GUI again
+end)
+
+-- Color Customization (Example of Color Change)
+local colorButton = Instance.new("TextButton")
+colorButton.Parent = mainFrame
+colorButton.Size = UDim2.new(0, 100, 0, 50)
+colorButton.Position = UDim2.new(0.5, -50, 0, 100)
+colorButton.Text = "Change Color"
+colorButton.MouseButton1Click:Connect(function()
+    mainFrame.BackgroundColor3 = Color3.fromRGB(math.random(0, 255), math.random(0, 255), math.random(0, 255))
+end)
+
+-- Loading Screen (example with progress bar)
+local loadingFrame = Instance.new("Frame")
+loadingFrame.Parent = screenGui
+loadingFrame.Size = UDim2.new(0, 400, 0, 500)
+loadingFrame.Position = UDim2.new(0.5, -200, 0.5, -250)
+loadingFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+loadingFrame.Visible = true
+
+local progressBar = Instance.new("Frame")
+progressBar.Parent = loadingFrame
+progressBar.Size = UDim2.new(0, 0, 0, 50)
+progressBar.Position = UDim2.new(0.5, -200, 0.5, 0)
+progressBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+
+local loadingText = Instance.new("TextLabel")
+loadingText.Parent = loadingFrame
+loadingText.Size = UDim2.new(1, 0, 0, 50)
+loadingText.Position = UDim2.new(0, 0, 0, -60)
+loadingText.Text = "Loading..."
+loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Simulate loading
+for i = 1, 100 do
+    wait(0.05)
+    progressBar.Size = UDim2.new(i/100, 0, 0, 50)
 end
+wait(1)
+loadingFrame.Visible = false  -- Hide loading screen after completion
 
-DestroyExistingGUI()
+-- Key System
+local keySystemFrame = Instance.new("Frame")
+keySystemFrame.Parent = mainFrame
+keySystemFrame.Size = UDim2.new(0, 400, 0, 200)
+keySystemFrame.Position = UDim2.new(0, 0, 0, 150)
+keySystemFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 
-wait(0.05)
+local keyLabel = Instance.new("TextLabel")
+keyLabel.Parent = keySystemFrame
+keyLabel.Size = UDim2.new(1, 0, 0, 50)
+keyLabel.Position = UDim2.new(0, 0, 0, 10)
+keyLabel.Text = "Enter Key"
+keyLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-local Library = {}
-local keySystemEnabled = true
-local currentKey = "SubTo _V5Q"
+local keyTextBox = Instance.new("TextBox")
+keyTextBox.Parent = keySystemFrame
+keyTextBox.Size = UDim2.new(1, -20, 0, 50)
+keyTextBox.Position = UDim2.new(0, 10, 0, 60)
+keyTextBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+keyTextBox.ClearTextOnFocus = false
+keyTextBox.PlaceholderText = "Enter your key here"
+keyTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 
--- Loading Screen
-local LoadingScreen = Instance.new("ScreenGui")
-local LoadingFrame = Instance.new("Frame")
-local LoadingText = Instance.new("TextLabel")
+local submitButton = Instance.new("TextButton")
+submitButton.Parent = keySystemFrame
+submitButton.Size = UDim2.new(0, 100, 0, 50)
+submitButton.Position = UDim2.new(0.5, -50, 1, -60)
+submitButton.Text = "Submit"
+submitButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+submitButton.MouseButton1Click:Connect(function()
+    local enteredKey = keyTextBox.Text
+    if enteredKey == "SECRETKEY" then
+        -- Unlock functionality after correct key
+        print("Key is correct!")
+        keySystemFrame.Visible = false
+        mainFrame.Visible = true  -- Show the UI after key is correct
+    else
+        -- Incorrect key message
+        print("Incorrect Key!")
+        keyTextBox.Text = ""
+    end
+end)
 
-LoadingScreen.Name = "LoadingScreen"
-LoadingScreen.Parent = game.CoreGui
+-- Player Selector (Dropdown style)
+local playerSelectorFrame = Instance.new("Frame")
+playerSelectorFrame.Parent = mainFrame
+playerSelectorFrame.Size = UDim2.new(0, 400, 0, 100)
+playerSelectorFrame.Position = UDim2.new(0, 0, 0, 250)
+playerSelectorFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 
-LoadingFrame.Parent = LoadingScreen
-LoadingFrame.Size = UDim2.new(0, 300, 0, 100)
-LoadingFrame.Position = UDim2.new(0.5, -150, 0.5, -50)
-LoadingFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+local playerDropdown = Instance.new("TextButton")
+playerDropdown.Parent = playerSelectorFrame
+playerDropdown.Size = UDim2.new(0, 400, 0, 50)
+playerDropdown.Position = UDim2.new(0, 0, 0, 25)
+playerDropdown.Text = "Select a Player"
+playerDropdown.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
 
-LoadingText.Parent = LoadingFrame
-LoadingText.Size = UDim2.new(1, 0, 1, 0)
-LoadingText.Font = Enum.Font.GothamBold
-LoadingText.Text = "Loading GUI..."
-LoadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
-LoadingText.TextSize = 18
+local playerList = Instance.new("ScrollingFrame")
+playerList.Parent = playerSelectorFrame
+playerList.Size = UDim2.new(1, 0, 0, 200)
+playerList.Position = UDim2.new(0, 0, 0, 75)
+playerList.CanvasSize = UDim2.new(0, 0, 0, 0)
+playerList.ScrollBarThickness = 10
 
-wait(3)
-LoadingScreen:Destroy()
+local uiListLayout = Instance.new("UIListLayout")
+uiListLayout.Parent = playerList
+uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+uiListLayout.Padding = UDim.new(0, 5)
 
--- Notification for Discord Server
-local Notification = Instance.new("Hint")
-Notification.Parent = game.CoreGui
-Notification.Text = "Discord Server: https://discord.gg/p3QUQu6RZN"
-wait(5)
-Notification:Destroy()
-
--- Key System Functionality
-local function ShowKeySystem()
-    if not keySystemEnabled then return end
-    
-    local KeySystemScreen = Instance.new("ScreenGui")
-    local KeyFrame = Instance.new("Frame")
-    local KeyInput = Instance.new("TextBox")
-    local SubmitButton = Instance.new("TextButton")
-
-    KeySystemScreen.Name = "KeySystemScreen"
-    KeySystemScreen.Parent = game.CoreGui
-
-    KeyFrame.Parent = KeySystemScreen
-    KeyFrame.Size = UDim2.new(0, 300, 0, 100)
-    KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -50)
-    KeyFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-
-    KeyInput.Parent = KeyFrame
-    KeyInput.Size = UDim2.new(1, 0, 0, 40)
-    KeyInput.Position = UDim2.new(0, 0, 0, 10)
-    KeyInput.PlaceholderText = "Enter Key"
-    KeyInput.Font = Enum.Font.GothamBold
-    KeyInput.TextSize = 14
-    KeyInput.TextColor3 = Color3.fromRGB(0, 0, 0)
-
-    SubmitButton.Parent = KeyFrame
-    SubmitButton.Size = UDim2.new(1, 0, 0, 40)
-    SubmitButton.Position = UDim2.new(0, 0, 0, 50)
-    SubmitButton.Text = "Submit"
-    SubmitButton.Font = Enum.Font.GothamBold
-    SubmitButton.TextSize = 14
-    SubmitButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    SubmitButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-
-    SubmitButton.MouseButton1Click:Connect(function()
-        if KeyInput.Text == currentKey then
-            KeySystemScreen:Destroy()
-        else
-            KeyInput.Text = "Invalid Key!"
-        end
+-- Populate the player list
+for _, player in ipairs(game.Players:GetPlayers()) do
+    local playerButton = Instance.new("TextButton")
+    playerButton.Parent = playerList
+    playerButton.Size = UDim2.new(0, 380, 0, 40)
+    playerButton.Text = player.Name
+    playerButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    playerButton.MouseButton1Click:Connect(function()
+        print("Selected Player: " .. player.Name)
+        playerDropdown.Text = "Selected: " .. player.Name
+        playerList.Visible = false  -- Close the player list
     end)
 end
 
-if keySystemEnabled then
-    ShowKeySystem()
-end
-
-function Library:SetKey(newKey)
-    currentKey = newKey
-end
-
-function Library:EnableKeySystem(state)
-    keySystemEnabled = state
-    if state then
-        ShowKeySystem()
-    end
-end
-
-function Library:CreateWindow(windowTitle, keybind)
-    print("Creating Window: " .. windowTitle)
-    local GUI = Instance.new("ScreenGui")
-    local MainFrame = Instance.new("Frame")
-    local Corner = Instance.new("UICorner")
-    local TopBar = Instance.new("Frame")
-    local Title = Instance.new("TextLabel")
-    local CloseButton = Instance.new("TextButton")
-    local MinimizeButton = Instance.new("TextButton")
-    local TabContainer = Instance.new("Frame")
-    local PageContainer = Instance.new("Frame")
-    local Theme = {MainColor = Color3.fromRGB(25, 25, 25), AccentColor = Color3.fromRGB(40, 40, 40)}
-    local isGUIVisible = true
-    
-    -- GUI Properties
-    GUI.Name = "AdvancedGUI"
-    GUI.Parent = game.CoreGui
-    GUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    GUI.ResetOnSpawn = false
-    
-    MainFrame.Parent = GUI
-    MainFrame.BackgroundColor3 = Theme.MainColor
-    MainFrame.Position = UDim2.new(0.3, 0, 0.2, 0)
-    MainFrame.Size = UDim2.new(0, 450, 0, 320)
-    MainFrame.Active = true
-    MainFrame.Draggable = true
-    
-    Corner.CornerRadius = UDim.new(0, 10)
-    Corner.Parent = MainFrame
-    
-    -- Top Bar
-    TopBar.Parent = MainFrame
-    TopBar.Size = UDim2.new(1, 0, 0, 30)
-    TopBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    
-    Title.Parent = TopBar
-    Title.Size = UDim2.new(1, -60, 1, 0)
-    Title.Font = Enum.Font.GothamBold
-    Title.Text = windowTitle
-    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Title.TextSize = 16
-    Title.TextXAlignment = Enum.TextXAlignment.Left
-    Title.Position = UDim2.new(0, 10, 0, 0)
-    
-    -- Buttons (Close & Minimize)
-    CloseButton.Parent = TopBar
-    CloseButton.Size = UDim2.new(0, 30, 1, 0)
-    CloseButton.Position = UDim2.new(1, -30, 0, 0)
-    CloseButton.Text = "X"
-    
-    MinimizeButton.Parent = TopBar
-    MinimizeButton.Size = UDim2.new(0, 30, 1, 0)
-    MinimizeButton.Position = UDim2.new(1, -60, 0, 0)
-    MinimizeButton.Text = "-"
-    
-    return Library
-end
-
-return Library
+-- Toggle player list visibility
+playerDropdown.MouseButton1Click:Connect(function()
+    playerList.Visible = not playerList.Visible
+end)
